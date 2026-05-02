@@ -25,6 +25,22 @@ const dom = new JSDOM(html, {
 const fetchPkg = 'node_modules/whatwg-fetch/dist/fetch.umd.js';
 dom.window.eval(fs.readFileSync(fetchPkg, 'utf-8'));
 
+// Mock fetch for testing
+dom.window.fetch = function(url) {
+  console.log('Mock fetch called with URL:', url);
+  return Promise.resolve({
+    status: 200,
+    json: function() {
+      return Promise.resolve({
+        userId: 1,
+        id: 1,
+        title: 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+        body: 'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto'
+      });
+    }
+  });
+};
+
 // Inject the transformed JavaScript into the virtual DOM
 const scriptElement = dom.window.document.createElement("script");
 scriptElement.textContent = transformedScript;
